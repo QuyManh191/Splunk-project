@@ -7,7 +7,7 @@
 
 ![Splunk Indexes](./images/01-splunk-indexes.png)
 
-* **Máy client (Windows 10):** IP 192.168.2.5, cài Splunk Universal Forwarder. Cấu hình file `inputs.conf` và `outputs.conf` để đẩy log.
+ **Máy client (Windows 10):** IP 192.168.2.5, cài Splunk Universal Forwarder. Cấu hình file `inputs.conf` và `outputs.conf` để đẩy log.
 
 ![Cấu hình inputs](./images/02-forwarder-inputs.png)
 ![Cấu hình outputs](./images/03-forwarder-outputs.png)
@@ -25,7 +25,7 @@
 
 ![Tải malware](./images/06-malware-download.png)
 
-* Malware thiết lập persistence bằng cách thêm giá trị vào Registry Run Key: `HKCU:\Software\Microsoft\Windows\CurrentVersion\Run`.
+  Malware thiết lập persistence bằng cách thêm giá trị vào Registry Run Key: `HKCU:\Software\Microsoft\Windows\CurrentVersion\Run`.
 
 ![Registry Runkey](./images/07-registry-runkey.png)
 
@@ -33,7 +33,7 @@
 
 ![Detection Rules](./images/08-detection-rules.png)
 
-* **Phát hiện tương tác với các Registry Run Key, lọc các app hợp lệ dựa trên bảng lookup cấu hình từ trước, sử dụng cơ chế tính điểm để lọc ra các event chạy script có nhiều tham số, trường lệnh nhạy cảm :**
+ **Phát hiện tương tác với các Registry Run Key, lọc các app hợp lệ dựa trên bảng lookup cấu hình từ trước, sử dụng cơ chế tính điểm để lọc ra các event chạy script có nhiều tham số, trường lệnh nhạy cảm :**
 index=sysmon
 EventCode=13
 (
@@ -57,15 +57,15 @@ EventCode=13
 | where score>=1
 | stats
     count values(Details) latest(UtcTime) values(User) as Users by ComputerName User Image TargetObject score
-* **Phát hiện kết nối C2:**
+ **Phát hiện kết nối C2:**
   `index="sysmon" EventCode=3 DestinationPort=4444`
 
 ## 4. Điều tra và phân tích kết quả trên Splunk
-* **Phát hiện Persistence:** EventCode 13 ghi nhận `update.exe` sửa Registry, chèn lệnh PowerShell chạy `backdoor.ps1` ẩn (`-WindowStyle Hidden -ExecutionPolicy Bypass`).
+ **Phát hiện Persistence:** EventCode 13 ghi nhận `update.exe` sửa Registry, chèn lệnh PowerShell chạy `backdoor.ps1` ẩn (`-WindowStyle Hidden -ExecutionPolicy Bypass`).
 
 ![Phát hiện Registry](./images/09-registry-detection.png)
 
-* **Truy xuất nguồn gốc:** EventCode 1 ghi nhận `update.exe` sinh ra từ `explorer.exe`. 
+ **Truy xuất nguồn gốc:** EventCode 1 ghi nhận `update.exe` sinh ra từ `explorer.exe`. 
 
 ![Điều tra Process](./images/10-process-investigation.png)
 
@@ -73,14 +73,14 @@ EventCode 11 và luồng `Zone.Identifier` xác nhận file tải về từ Inte
 
 ![Zone Identifier](./images/11-zone-identifier.png)
 
-* **Phân tích hành vi file:** EventCode 11 cho thấy `update.exe` trực tiếp sinh ra hai file `ncat.exe` và `backdoor.ps1` trong thư mục Temp.
+ **Phân tích hành vi file:** EventCode 11 cho thấy `update.exe` trực tiếp sinh ra hai file `ncat.exe` và `backdoor.ps1` trong thư mục Temp.
 
 ![Malware files](./images/12-malware-files.png)
 
-* **Xác nhận thực thi:** Đối chiếu EventCode 4624 (Logon) và EventCode 1 (Process Create), PowerShell kích hoạt `backdoor.ps1` thành công ngay khi người dùng đăng nhập lại, do `explorer.exe` gọi từ Run Key.
+ **Xác nhận thực thi:** Đối chiếu EventCode 4624 (Logon) và EventCode 1 (Process Create), PowerShell kích hoạt `backdoor.ps1` thành công ngay khi người dùng đăng nhập lại, do `explorer.exe` gọi từ Run Key.
 
 ![Thực thi Persistence](./images/13-persistence-execution.png)
 
-* **Phát hiện kết nối C2 (Network):**
+ **Phát hiện kết nối C2 (Network):**
 
 ![Phát hiện C2](./images/14-c2-detection.png)
