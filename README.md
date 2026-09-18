@@ -36,9 +36,6 @@
  **Phát hiện tương tác với các Registry Run Key, lọc các app hợp lệ dựa trên bảng lookup cấu hình từ trước, sử dụng cơ chế tính điểm để lọc ra các event chạy script có nhiều tham số, trường lệnh nhạy cảm :**
 Mở README ở chế độ **Edit (Raw / Code)** thay vì chế độ Preview/Rich text, rồi dán toàn bộ đoạn sau:
 
-```markdown
-Phát hiện tương tác với các Registry Run Key, lọc các app hợp lệ dựa trên bảng lookup cấu hình từ trước, sử dụng cơ chế tính điểm để lọc ra các event chạy script có nhiều tham số, trường lệnh nhạy cảm:
-
 ```spl
 index=sysmon EventCode=13
 (
@@ -67,9 +64,6 @@ index=sysmon EventCode=13
     values(User) as Users
     by ComputerName, User, Image, TargetObject, score
 ```
-
-```
-
 ## 4. Điều tra và phân tích kết quả trên Splunk
  **Phát hiện Persistence:** EventCode 13 ghi nhận `update.exe` sửa Registry, chèn lệnh PowerShell chạy `backdoor.ps1` ẩn (`-WindowStyle Hidden -ExecutionPolicy Bypass`).
 
