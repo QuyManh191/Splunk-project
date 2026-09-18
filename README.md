@@ -60,8 +60,6 @@ index=sysmon EventCode=13
     latest(UtcTime) as LastSeen,
     values(User) as Users
     by ComputerName, User, Image, TargetObject, score
- **Phát hiện kết nối C2:**
-  `index="sysmon" EventCode=3 DestinationPort=4444`
 
 ## 4. Điều tra và phân tích kết quả trên Splunk
  **Phát hiện Persistence:** EventCode 13 ghi nhận `update.exe` sửa Registry, chèn lệnh PowerShell chạy `backdoor.ps1` ẩn (`-WindowStyle Hidden -ExecutionPolicy Bypass`).
