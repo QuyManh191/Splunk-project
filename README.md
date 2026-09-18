@@ -12,16 +12,16 @@
 ![Cấu hình inputs](./images/02-forwarder-inputs.png)
 ![Cấu hình outputs](./images/03-forwarder-outputs.png)
 
-* **Kiểm tra Log:** Log trả về thành công.
+ **Kiểm tra Log:** Log trả về thành công.
 
 ![Nhận log thành công](./images/04-log-ingestion.png)
 
 ## 2. Kịch bản mô phỏng tấn công
-* Kẻ tấn công host HTTP server tại `192.168.2.10:5000` chứa file giả mạo `update.exe`.
+ Kẻ tấn công host HTTP server tại `192.168.2.10:5000` chứa file giả mạo `update.exe`.
 
 ![Trang web giả mạo](./images/05-attack-scenario.png)
 
-* Người dùng tải và chạy `update.exe`, file này bí mật tải `backdoor.ps1` và `ncat.exe` vào `C:\Users\admin\AppData\Local\Temp\MicrosoftUpdates`.
+ Người dùng tải và chạy `update.exe`, file này bí mật tải `backdoor.ps1` và `ncat.exe` vào `C:\Users\admin\AppData\Local\Temp\MicrosoftUpdates`.
 
 ![Tải malware](./images/06-malware-download.png)
 
