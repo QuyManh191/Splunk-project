@@ -33,12 +33,30 @@
 
 ![Detection Rules](./images/08-detection-rules.png)
 
-* **Phát hiện tương tác Run Key từ file lạ:**
-  `index="sysmon" EventCode=13 Image="*\\update.exe" TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\MicrosoftSystemUpdate"`
-* **Phát hiện PowerShell sử dụng policy bypass:**
-  `index=sysmon EventCode=1 Image="*\\powershell.exe" CommandLine="*-ExecutionPolicy*Bypass*"`
-* **Phát hiện Run Key trỏ vào thư mục tạm (Temp/AppData):**
-  `index="sysmon" EventCode=13 TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\*" (Details="*\\Temp\\*" OR Details="*\\AppData\\*")`
+* **Phát hiện tương tác với các Registry Run Key, lọc các app hợp lệ dựa trên bảng lookup cấu hình từ trước, sử dụng cơ chế tính điểm để lọc ra các event chạy script có nhiều tham số, trường lệnh nhạy cảm :**
+index=sysmon
+EventCode=13
+(
+    TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\*"
+    OR TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\*"
+    OR TargetObject="*\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurTrentVersion\\Run\\*"
+)
+| lookup trusted_apps_lookup approved_image OUTPUT application
+| where isnull(application)
+| eval score=0
+| eval score=score+if(match(Details,"(?i)powershell(\.exe)?"),2,0)
+| eval score=score+if(match(Details,"(?i)-ExecutionPolicy\s+Bypass"),3,0)
+| eval score=score+if(match(Details,"(?i)-WindowStyle\s+Hidden"),2,0)
+| eval score=score+if(match(Details,"(?i)-EncodedCommand"),3,0)
+| eval score=score+if(match(Details,"(?i)-NoProfile"),1,0)
+| eval score=score+if(match(Details,"(?i)-File\s+"),1,0)
+| eval score=score+if(match(Details,"(?i)\.ps1"),1,0)
+| eval score=score+if(match(Details,"(?i)\\\\(Temp|AppData\\\\Roaming|ProgramData)\\\\"),2,0)
+| eval score=score+if(match(Details,"(?i)cmd(\.exe)?\s+/c"),2,0)
+| eval score=score+if(match(Details,"(?i)mshta|regsvr32|rundll32"),2,0)
+| where score>=1
+| stats
+    count values(Details) latest(UtcTime) values(User) as Users by ComputerName User Image TargetObject score
 * **Phát hiện kết nối C2:**
   `index="sysmon" EventCode=3 DestinationPort=4444`
 
