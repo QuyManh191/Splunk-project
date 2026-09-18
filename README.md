@@ -3,7 +3,7 @@
 # Triển khai và Điều tra Sự cố với SIEM Splunk
 
 ## 1. Cài đặt môi trường
-* **Máy chủ Linux (Splunk):** IP 192.168.2.10, cổng nhận log 9997. Cài đặt TA windows addon for sysmon, splunk addon for microsoft windows, splunk CIM. Tạo index `sysmon` và `windows_clientA`.
+ **Máy chủ Linux (Splunk):** IP 192.168.2.10, cổng nhận log 9997. Cài đặt TA windows addon for sysmon, splunk addon for microsoft windows, splunk CIM. Tạo index `sysmon` và `windows_clientA`.
 
 ![Splunk Indexes](./images/01-splunk-indexes.png)
 
